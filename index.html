@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tropico – Mowa, Raipur</title>
+<link href="https://fonts.googleapis.com/css2?family=Righteous&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&family=Playfair+Display:ital@1&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --g1:#0b2a12;
+  --g2:#14401e;
+  --g3:#1e5c2a;
+  --lime:#5ecb6b;
+  --neon:#00ff6a;
+  --yellow:#ffe135;
+  --orange:#ff8c00;
+  --pink:#ff4d8d;
+  --cream:#faf5e4;
+  --white:#ffffff;
+  --dark:#080f09;
+  --card-bg:rgba(255,255,255,0.04);
+  --border:rgba(94,203,107,0.2);
+}
+html{scroll-behavior:smooth;cursor:none;}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--dark);
+  color:var(--white);
+  overflow-x:hidden;
+}
+
+/* CUSTOM CURSOR */
+.cursor{
+  width:12px;height:12px;
+  background:var(--neon);
+  border-radius:50%;
+  position:fixed;z-index:9999;
+  pointer-events:none;
+  transform:translate(-50%,-50%);
+  transition:width 0.2s,height 0.2s,background 0.2s;
+  mix-blend-mode:difference;
+}
+.cursor-ring{
+  width:36px;height:36px;
+  border:1.5px solid var(--neon);
+  border-radius:50%;
+  position:fixed;z-index:9998;
+  pointer-events:none;
+  transform:translate(-50%,-50%);
+  transition:all 0.12s ease;
+  mix-blend-mode:difference;
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:var(--dark);}
+::-webkit-scrollbar-thumb{background:var(--lime);border-radius:2px;}
+
+/* NAV */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:500;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:1.2rem 5%;
+  transition:background 0.4s,backdrop-filter 0.4s,border 0.4s;
+}
+nav.scrolled{
+  background:rgba(8,15,9,0.92);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+}
+.nav-logo{
+  font-family:'Righteous',cursive;
+  font-size:2rem;
+  background:linear-gradient(135deg,var(--yellow),var(--lime),var(--yellow));
+  background-size:200%;
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  animation:shimmer 3s linear infinite;
+  letter-spacing:0.05em;
+}
+@keyframes shimmer{0%{background-position:0%}100%{background-position:200%}}
+.nav-links{display:flex;gap:2.5rem;list-style:none;}
+.nav-links a{
+  text-decoration:none;
+  color:rgba(255,255,255,0.6);
+  font-size:0.78rem;font-weight:500;
+  letter-spacing:0.12em;text-transform:uppercase;
+  position:relative;transition:color 0.3s;
+}
+.nav-links a::after{
+  content:'';position:absolute;bottom:-4px;left:0;right:0;
+  height:1px;background:var(--lime);
+  transform:scaleX(0);transition:transform 0.3s;
+}
+.nav-links a:hover{color:var(--white);}
+.nav-links a:hover::after{transform:scaleX(1);}
+.nav-cta{
+  background:linear-gradient(135deg,var(--lime),var(--g3));
+  color:var(--dark);font-weight:700;
+  padding:0.6rem 1.5rem;border-radius:50px;
+  font-size:0.78rem;letter-spacing:0.08em;text-transform:uppercase;
+  text-decoration:none;transition:transform 0.2s,box-shadow 0.2s;
+  border:none;cursor:none;
+}
+.nav-cta:hover{transform:scale(1.05);box-shadow:0 0 20px rgba(94,203,107,0.5);}
+
+/* HERO */
+.hero{
+  min-height:100vh;
+  display:grid;grid-template-columns:1fr 1fr;
+  position:relative;overflow:hidden;
+  padding-top:80px;
+}
+.hero-bg{
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse at 30% 50%,rgba(30,92,42,0.35) 0%,transparent 65%),
+             radial-gradient(ellipse at 80% 20%,rgba(255,225,53,0.08) 0%,transparent 50%),
+             radial-gradient(ellipse at 70% 80%,rgba(0,255,106,0.06) 0%,transparent 50%),
+             var(--dark);
+}
+.hero-noise{
+  position:absolute;inset:0;opacity:0.03;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:200px;
+}
+
+/* FLOATING ELEMENTS */
+.float-el{
+  position:absolute;border-radius:50%;pointer-events:none;
+  animation:floatAnim 6s ease-in-out infinite;
+}
+.float-el:nth-child(1){width:300px;height:300px;background:radial-gradient(var(--lime),transparent 70%);opacity:0.07;top:10%;left:5%;animation-delay:0s;}
+.float-el:nth-child(2){width:200px;height:200px;background:radial-gradient(var(--yellow),transparent 70%);opacity:0.06;top:60%;left:40%;animation-delay:2s;}
+.float-el:nth-child(3){width:250px;height:250px;background:radial-gradient(var(--orange),transparent 70%);opacity:0.05;top:20%;right:5%;animation-delay:4s;}
+@keyframes floatAnim{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-20px) scale(1.05)}}
+
+.hero-left{
+  display:flex;flex-direction:column;justify-content:center;
+  padding:0 6% 0 8%;position:relative;z-index:2;
+}
+.hero-pill{
+  display:inline-flex;align-items:center;gap:0.6rem;
+  background:rgba(94,203,107,0.1);border:1px solid rgba(94,203,107,0.3);
+  color:var(--lime);font-size:0.72rem;font-weight:600;
+  letter-spacing:0.15em;text-transform:uppercase;
+  padding:0.4rem 1rem;border-radius:50px;
+  margin-bottom:2rem;width:fit-content;
+  animation:fadeUp 0.6s ease 0.1s both;
+}
+.pill-dot{width:6px;height:6px;border-radius:50%;background:var(--lime);animation:blink 1.5s ease infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+
+.hero-title{
+  font-family:'Righteous',cursive;
+  font-size:clamp(4.5rem,9vw,8rem);
+  line-height:0.92;
+  letter-spacing:-0.01em;
+  margin-bottom:1.5rem;
+  animation:fadeUp 0.7s ease 0.2s both;
+}
+.hero-title .line1{
+  display:block;
+  background:linear-gradient(180deg,#fff 40%,rgba(255,255,255,0.4));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.hero-title .line2{
+  display:block;
+  background:linear-gradient(135deg,var(--yellow),var(--orange),var(--lime));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  font-style:italic;transform:skewX(-3deg);display:inline-block;
+}
+
+.hero-sub{
+  font-size:1rem;color:rgba(255,255,255,0.5);font-weight:300;
+  line-height:1.7;max-width:380px;margin-bottom:2.5rem;
+  animation:fadeUp 0.7s ease 0.35s both;
+}
+.hero-sub em{color:var(--lime);font-style:normal;font-weight:500;}
+
+.hero-actions{
+  display:flex;gap:1rem;align-items:center;flex-wrap:wrap;
+  animation:fadeUp 0.7s ease 0.5s both;
+}
+.btn-primary{
+  background:linear-gradient(135deg,var(--lime),#3db84a);
+  color:var(--dark);font-weight:700;font-size:0.85rem;
+  padding:0.9rem 2.2rem;border-radius:50px;
+  text-decoration:none;letter-spacing:0.06em;text-transform:uppercase;
+  border:none;cursor:none;
+  transition:transform 0.2s,box-shadow 0.3s;
+  position:relative;overflow:hidden;
+}
+.btn-primary::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,transparent 40%,rgba(255,255,255,0.3) 60%,transparent 80%);
+  transform:translateX(-100%);transition:transform 0.4s;
+}
+.btn-primary:hover::before{transform:translateX(100%);}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(94,203,107,0.4);}
+
+.btn-ghost-hero{
+  color:rgba(255,255,255,0.7);font-size:0.85rem;font-weight:500;
+  text-decoration:none;letter-spacing:0.06em;text-transform:uppercase;
+  display:flex;align-items:center;gap:0.5rem;
+  transition:color 0.2s;cursor:none;
+}
+.btn-ghost-hero:hover{color:var(--white);}
+.arrow-circle{
+  width:36px;height:36px;border:1px solid rgba(255,255,255,0.2);
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:1rem;transition:border-color 0.2s,background 0.2s;
+}
+.btn-ghost-hero:hover .arrow-circle{border-color:var(--lime);background:rgba(94,203,107,0.1);}
+
+.hero-stats{
+  display:flex;gap:2.5rem;margin-top:3.5rem;padding-top:2.5rem;
+  border-top:1px solid rgba(255,255,255,0.08);
+  animation:fadeUp 0.7s ease 0.65s both;
+}
+.stat-num{
+  font-family:'Righteous',cursive;font-size:2.2rem;
+  background:linear-gradient(135deg,var(--yellow),var(--lime));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  line-height:1;
+}
+.stat-lbl{font-size:0.7rem;color:rgba(255,255,255,0.4);letter-spacing:0.12em;text-transform:uppercase;margin-top:0.25rem;}
+
+/* HERO RIGHT - visual */
+.hero-right{
+  position:relative;z-index:2;
+  display:flex;align-items:center;justify-content:center;
+  padding:3rem 5% 3rem 2rem;
+  animation:fadeUp 0.8s ease 0.3s both;
+}
+.hero-visual{
+  width:100%;max-width:480px;aspect-ratio:1;
+  position:relative;
+}
+.hero-circle-outer{
+  width:100%;height:100%;border-radius:50%;
+  border:1px solid rgba(94,203,107,0.15);
+  display:flex;align-items:center;justify-content:center;
+  animation:spinSlow 20s linear infinite;
+}
+.hero-circle-inner{
+  width:80%;height:80%;border-radius:50%;
+  border:1px solid rgba(255,225,53,0.1);
+  display:flex;align-items:center;justify-content:center;
+  animation:spinSlow 15s linear infinite reverse;
+}
+@keyframes spinSlow{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.hero-center{
+  width:75%;height:75%;border-radius:50%;
+  background:radial-gradient(circle at 40% 35%,var(--g3),var(--g1));
+  display:flex;align-items:center;justify-content:center;
+  font-size:clamp(5rem,10vw,8rem);
+  position:relative;overflow:hidden;
+  box-shadow:0 0 60px rgba(94,203,107,0.2),inset 0 0 40px rgba(0,0,0,0.3);
+  animation:spinSlow 0s linear;/* stop inner from spinning */
+}
+.hero-center::after{
+  content:'';position:absolute;inset:0;
+  background:url('https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=600&q=80') center/cover;
+  opacity:0.3;border-radius:50%;
+}
+.hero-center-text{
+  position:relative;z-index:1;text-align:center;
+  animation:spinSlow 20s linear infinite reverse;/* counter-rotate to stay upright */
+}
+.hct-main{font-family:'Righteous',cursive;font-size:clamp(1.5rem,3vw,2.5rem);color:var(--yellow);line-height:1;}
+.hct-sub{font-size:clamp(0.55rem,1vw,0.75rem);color:rgba(255,255,255,0.6);letter-spacing:0.15em;text-transform:uppercase;margin-top:0.3rem;}
+
+/* Orbit dots */
+.orbit-dot{
+  position:absolute;width:10px;height:10px;border-radius:50%;
+  background:var(--lime);box-shadow:0 0 10px var(--lime);
+}
+.orbit-dot:nth-child(2){top:5%;left:50%;transform:translateX(-50%);}
+.orbit-dot:nth-child(3){bottom:5%;left:50%;transform:translateX(-50%);background:var(--yellow);box-shadow:0 0 10px var(--yellow);}
+.orbit-dot:nth-child(4){left:5%;top:50%;transform:translateY(-50%);background:var(--orange);box-shadow:0 0 10px var(--orange);}
+.orbit-dot:nth-child(5){right:5%;top:50%;transform:translateY(-50%);}
+
+/* Floating food tags */
+.food-tag{
+  position:absolute;background:rgba(8,15,9,0.85);
+  border:1px solid var(--border);
+  backdrop-filter:blur(10px);
+  border-radius:12px;padding:0.6rem 1rem;
+  display:flex;align-items:center;gap:0.5rem;
+  animation:tagFloat 4s ease-in-out infinite;
+  white-space:nowrap;
+}
+.food-tag .tag-emoji{font-size:1.3rem;}
+.food-tag .tag-text{font-size:0.72rem;font-weight:600;color:var(--white);}
+.food-tag .tag-price{font-size:0.65rem;color:var(--lime);font-weight:600;}
+.ft1{top:8%;right:-5%;animation-delay:0s;}
+.ft2{bottom:15%;right:-8%;animation-delay:1.5s;}
+.ft3{bottom:5%;left:-5%;animation-delay:3s;}
+.ft4{top:40%;left:-10%;animation-delay:0.8s;}
+@keyframes tagFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+
+/* MARQUEE */
+.marquee-wrap{
+  padding:0.8rem 0;overflow:hidden;
+  background:linear-gradient(90deg,var(--g1),var(--g3),var(--g1));
+  border-top:1px solid rgba(94,203,107,0.2);
+  border-bottom:1px solid rgba(94,203,107,0.2);
+  position:relative;
+}
+.marquee-wrap::before,.marquee-wrap::after{
+  content:'';position:absolute;top:0;bottom:0;width:80px;z-index:2;
+}
+.marquee-wrap::before{left:0;background:linear-gradient(90deg,var(--g1),transparent);}
+.marquee-wrap::after{right:0;background:linear-gradient(-90deg,var(--g1),transparent);}
+.marquee-track{display:inline-flex;animation:marquee 25s linear infinite;}
+.m-item{
+  font-family:'Righteous',cursive;
+  font-size:0.85rem;letter-spacing:0.1em;text-transform:uppercase;
+  color:rgba(255,255,255,0.7);padding:0 2.5rem;white-space:nowrap;
+}
+.m-dot{color:var(--yellow);font-size:0.5rem;vertical-align:middle;}
+@keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* INFO STRIP */
+.info-strip{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  border-bottom:1px solid rgba(255,255,255,0.05);
+}
+.info-card{
+  padding:2.5rem 2rem;text-align:center;
+  border-right:1px solid rgba(255,255,255,0.05);
+  background:var(--dark);
+  transition:background 0.3s;
+  position:relative;overflow:hidden;
+}
+.info-card::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(94,203,107,0.05),transparent);
+  opacity:0;transition:opacity 0.3s;
+}
+.info-card:hover::before{opacity:1;}
+.info-card:last-child{border-right:none;}
+.info-icon{font-size:1.8rem;margin-bottom:0.8rem;display:block;}
+.info-label{font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--lime);font-weight:600;margin-bottom:0.5rem;}
+.info-val{font-size:0.88rem;color:rgba(255,255,255,0.65);line-height:1.6;font-weight:300;}
+
+/* SECTION HEADERS */
+.section-header{text-align:center;margin-bottom:4rem;}
+.s-eyebrow{
+  font-size:0.7rem;letter-spacing:0.25em;text-transform:uppercase;
+  color:var(--lime);font-weight:600;margin-bottom:1rem;
+  display:flex;align-items:center;justify-content:center;gap:1rem;
+}
+.s-eyebrow::before,.s-eyebrow::after{content:'';flex:1;max-width:60px;height:1px;background:rgba(94,203,107,0.4);}
+.s-title{
+  font-family:'Righteous',cursive;
+  font-size:clamp(2.5rem,5vw,4.5rem);
+  letter-spacing:0.02em;line-height:0.95;
+  background:linear-gradient(180deg,var(--white) 0%,rgba(255,255,255,0.6) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.s-title .accent{
+  background:linear-gradient(135deg,var(--yellow),var(--lime));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+
+/* MENU */
+.menu-section{padding:6rem 5%;background:var(--dark);}
+
+.cat-tabs{
+  display:flex;flex-wrap:wrap;gap:0.6rem;justify-content:center;
+  margin-bottom:3.5rem;
+}
+.cat-tab{
+  padding:0.55rem 1.3rem;border-radius:50px;
+  font-size:0.75rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;
+  border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.5);
+  background:transparent;cursor:none;transition:all 0.25s;
+}
+.cat-tab:hover{border-color:rgba(94,203,107,0.4);color:var(--lime);}
+.cat-tab.active{
+  background:linear-gradient(135deg,var(--lime),#3db84a);
+  color:var(--dark);border-color:transparent;
+  box-shadow:0 4px 20px rgba(94,203,107,0.3);
+}
+
+/* MENU GRID */
+.menu-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+  gap:1px;
+  border:1px solid rgba(255,255,255,0.06);
+  border-radius:20px;overflow:hidden;
+  background:rgba(255,255,255,0.04);
+}
+.menu-item{
+  padding:1.4rem 1.6rem;
+  display:flex;justify-content:space-between;align-items:center;
+  background:rgba(8,15,9,0.8);
+  border:1px solid transparent;
+  transition:background 0.3s,border-color 0.3s,transform 0.2s;
+  position:relative;cursor:none;
+  gap:1rem;
+}
+.menu-item::before{
+  content:'';position:absolute;left:0;top:20%;bottom:20%;
+  width:2px;background:var(--lime);border-radius:2px;
+  transform:scaleY(0);transition:transform 0.3s;
+}
+.menu-item.special::before{background:var(--yellow);}
+.menu-item:hover{
+  background:rgba(94,203,107,0.04);
+  border-color:rgba(94,203,107,0.15);
+}
+.menu-item:hover::before{transform:scaleY(1);}
+.item-left{flex:1;}
+.item-name{font-size:0.92rem;font-weight:600;color:var(--white);margin-bottom:0.2rem;line-height:1.3;}
+.item-desc{font-size:0.75rem;color:rgba(255,255,255,0.4);line-height:1.5;font-weight:300;}
+.item-badges{display:flex;gap:0.4rem;margin-top:0.5rem;flex-wrap:wrap;}
+.badge{
+  font-size:0.6rem;letter-spacing:0.08em;text-transform:uppercase;font-weight:700;
+  padding:0.15rem 0.5rem;border-radius:6px;
+}
+.badge-hit{background:rgba(255,225,53,0.15);color:var(--yellow);border:1px solid rgba(255,225,53,0.3);}
+.badge-new{background:rgba(0,255,106,0.1);color:var(--neon);border:1px solid rgba(0,255,106,0.25);}
+.badge-hot{background:rgba(255,140,0,0.12);color:var(--orange);border:1px solid rgba(255,140,0,0.3);}
+.item-right{text-align:right;flex-shrink:0;}
+.item-price{
+  font-family:'Righteous',cursive;
+  font-size:1.4rem;
+  background:linear-gradient(135deg,var(--lime),var(--yellow));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  line-height:1;
+}
+.add-btn{
+  margin-top:0.4rem;
+  font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;font-weight:700;
+  color:rgba(255,255,255,0.3);background:none;border:none;cursor:none;
+  transition:color 0.2s;padding:0;
+}
+.menu-item:hover .add-btn{color:var(--lime);}
+
+/* CATEGORY LABEL */
+.cat-label{
+  grid-column:1/-1;
+  padding:1.2rem 1.8rem;
+  background:rgba(94,203,107,0.05);
+  border-bottom:1px solid rgba(94,203,107,0.1);
+  display:flex;align-items:center;gap:1rem;
+}
+.cat-label-text{
+  font-family:'Righteous',cursive;
+  font-size:0.9rem;letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--lime);
+}
+.cat-label-line{flex:1;height:1px;background:rgba(94,203,107,0.15);}
+
+/* SPECIALS */
+.specials{
+  padding:6rem 5%;
+  background:linear-gradient(135deg,var(--g1) 0%,var(--dark) 50%,var(--g2) 100%);
+  position:relative;overflow:hidden;
+}
+.specials-bg-text{
+  position:absolute;
+  font-family:'Righteous',cursive;
+  font-size:20vw;color:rgba(94,203,107,0.03);
+  top:50%;left:50%;transform:translate(-50%,-50%);
+  white-space:nowrap;pointer-events:none;letter-spacing:0.05em;
+}
+.specials-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;
+  position:relative;z-index:1;
+}
+.special-card{
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:20px;padding:2rem;
+  transition:transform 0.3s,border-color 0.3s,box-shadow 0.3s;
+  position:relative;overflow:hidden;cursor:none;
+}
+.special-card::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(94,203,107,0.05),transparent 60%);
+  opacity:0;transition:opacity 0.3s;
+}
+.special-card:hover{
+  transform:translateY(-6px);
+  border-color:rgba(94,203,107,0.3);
+  box-shadow:0 20px 50px rgba(0,0,0,0.4),0 0 30px rgba(94,203,107,0.1);
+}
+.special-card:hover::before{opacity:1;}
+.sc-emoji{font-size:2.5rem;margin-bottom:1rem;display:block;}
+.sc-name{
+  font-family:'Righteous',cursive;font-size:1.2rem;
+  color:var(--white);margin-bottom:0.5rem;letter-spacing:0.02em;
+}
+.sc-desc{font-size:0.82rem;color:rgba(255,255,255,0.45);line-height:1.6;font-weight:300;margin-bottom:1.5rem;}
+.sc-footer{display:flex;justify-content:space-between;align-items:center;}
+.sc-price{
+  font-family:'Righteous',cursive;font-size:1.6rem;
+  background:linear-gradient(135deg,var(--yellow),var(--orange));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.sc-tag{
+  font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;font-weight:700;
+  padding:0.25rem 0.7rem;border-radius:50px;
+  background:rgba(255,225,53,0.1);color:var(--yellow);
+  border:1px solid rgba(255,225,53,0.25);
+}
+
+/* ABOUT */
+.about{padding:6rem 5%;background:var(--dark);}
+.about-inner{
+  display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:center;
+  max-width:1200px;margin:0 auto;
+}
+.about-visual{position:relative;}
+.about-img-wrap{
+  width:100%;aspect-ratio:4/5;border-radius:24px;overflow:hidden;
+  position:relative;
+}
+.about-img-wrap img{width:100%;height:100%;object-fit:cover;filter:brightness(0.7);}
+.about-img-wrap::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(8,15,9,0.8),transparent 50%);
+}
+.about-overlay-text{
+  position:absolute;bottom:2rem;left:2rem;right:2rem;z-index:2;
+}
+.aot-rating{
+  display:inline-flex;align-items:center;gap:0.5rem;
+  background:rgba(8,15,9,0.8);backdrop-filter:blur(10px);
+  border:1px solid rgba(94,203,107,0.3);border-radius:50px;
+  padding:0.5rem 1rem;font-size:0.82rem;color:var(--white);font-weight:500;
+  margin-bottom:0.8rem;
+}
+.aot-name{
+  font-family:'Righteous',cursive;font-size:2rem;color:var(--white);
+  line-height:1;text-shadow:0 2px 10px rgba(0,0,0,0.5);
+}
+.about-deco{
+  position:absolute;
+  width:180px;height:180px;
+  border-radius:20px;
+  background:linear-gradient(135deg,var(--g3),var(--g1));
+  border:1px solid rgba(94,203,107,0.2);
+  top:-2rem;right:-2rem;z-index:-1;
+  display:flex;align-items:center;justify-content:center;
+  font-size:5rem;
+}
+.about-content{}
+.about-content .s-eyebrow{justify-content:flex-start;}
+.about-content .s-eyebrow::before{display:none;}
+.about-content .s-title{text-align:left;margin-bottom:1.5rem;}
+.about-body{font-size:0.95rem;color:rgba(255,255,255,0.5);line-height:1.85;font-weight:300;margin-bottom:1rem;}
+.features-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;margin-top:2rem;}
+.feat-item{
+  display:flex;align-items:center;gap:0.7rem;
+  background:rgba(94,203,107,0.05);border:1px solid rgba(94,203,107,0.12);
+  border-radius:10px;padding:0.8rem 1rem;
+  font-size:0.8rem;color:rgba(255,255,255,0.7);font-weight:500;
+  transition:border-color 0.2s,background 0.2s;
+}
+.feat-item:hover{border-color:rgba(94,203,107,0.3);background:rgba(94,203,107,0.08);}
+.feat-icon{font-size:1.1rem;}
+
+/* VISIT */
+.visit{
+  padding:6rem 5%;
+  background:linear-gradient(135deg,var(--g2) 0%,var(--dark) 100%);
+}
+.visit-grid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;max-width:1200px;margin:0 auto;}
+.v-cards{display:flex;flex-direction:column;gap:1rem;}
+.v-card{
+  background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);
+  border-radius:16px;padding:1.5rem;display:flex;gap:1.2rem;align-items:flex-start;
+  transition:border-color 0.2s,background 0.2s;
+}
+.v-card:hover{border-color:rgba(94,203,107,0.25);background:rgba(94,203,107,0.04);}
+.v-icon{
+  width:46px;height:46px;border-radius:12px;flex-shrink:0;
+  background:rgba(94,203,107,0.1);border:1px solid rgba(94,203,107,0.2);
+  display:flex;align-items:center;justify-content:center;font-size:1.2rem;
+}
+.v-label{font-size:0.65rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--lime);font-weight:600;margin-bottom:0.3rem;}
+.v-val{font-size:0.88rem;color:rgba(255,255,255,0.65);line-height:1.6;font-weight:300;}
+.v-val a{color:var(--lime);text-decoration:none;}
+
+.map-card{
+  background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);
+  border-radius:24px;overflow:hidden;display:flex;flex-direction:column;
+}
+.map-top{
+  flex:1;
+  background:radial-gradient(circle at 50% 50%,rgba(30,92,42,0.3),var(--dark));
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:3rem 2rem;gap:1rem;text-align:center;
+  position:relative;min-height:280px;
+}
+.map-pin{font-size:3rem;animation:bounce 2.5s ease-in-out infinite;}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.map-rings{
+  position:absolute;width:200px;height:200px;
+  border-radius:50%;border:1px solid rgba(94,203,107,0.1);
+  top:50%;left:50%;transform:translate(-50%,-50%);
+}
+.map-rings::before{content:'';position:absolute;inset:-30px;border-radius:50%;border:1px solid rgba(94,203,107,0.06);}
+.map-rings::after{content:'';position:absolute;inset:-60px;border-radius:50%;border:1px solid rgba(94,203,107,0.03);}
+.map-title{font-family:'Righteous',cursive;font-size:1.4rem;color:var(--white);}
+.map-addr{font-size:0.82rem;color:rgba(255,255,255,0.5);line-height:1.7;font-weight:300;}
+.map-bottom{
+  padding:1.2rem;display:flex;gap:0.8rem;
+  border-top:1px solid rgba(255,255,255,0.06);
+}
+.btn-zomato{
+  flex:1;background:#e23744;color:#fff;
+  padding:0.75rem;border-radius:10px;font-weight:700;font-size:0.8rem;
+  text-decoration:none;text-align:center;letter-spacing:0.05em;text-transform:uppercase;
+  transition:opacity 0.2s,transform 0.2s;cursor:none;
+}
+.btn-zomato:hover{opacity:0.9;transform:scale(1.02);}
+.btn-call{
+  flex:1;background:rgba(94,203,107,0.1);color:var(--lime);
+  border:1px solid rgba(94,203,107,0.25);
+  padding:0.75rem;border-radius:10px;font-weight:700;font-size:0.8rem;
+  text-decoration:none;text-align:center;letter-spacing:0.05em;text-transform:uppercase;
+  transition:background 0.2s,transform 0.2s;cursor:none;
+}
+.btn-call:hover{background:rgba(94,203,107,0.18);transform:scale(1.02);}
+
+/* ORDER STRIP */
+.order-strip{
+  padding:4rem 5%;
+  background:linear-gradient(135deg,var(--lime) 0%,#3db84a 50%,var(--lime) 100%);
+  background-size:200%;
+  animation:shimmer 4s linear infinite;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:2rem;
+  position:relative;overflow:hidden;
+}
+.order-strip::before{
+  content:'TROPICO';
+  font-family:'Righteous',cursive;font-size:12rem;
+  color:rgba(255,255,255,0.05);
+  position:absolute;right:-2rem;top:50%;transform:translateY(-50%);
+  pointer-events:none;letter-spacing:0.05em;
+}
+.os-left{}
+.os-title{
+  font-family:'Righteous',cursive;font-size:2.5rem;
+  color:var(--dark);letter-spacing:0.02em;line-height:1;margin-bottom:0.4rem;
+}
+.os-sub{font-size:0.9rem;color:rgba(8,15,9,0.6);font-weight:400;}
+.os-btns{display:flex;gap:1rem;flex-wrap:wrap;}
+.ob-zomato{
+  background:var(--dark);color:var(--white);
+  padding:0.9rem 2rem;border-radius:50px;
+  font-weight:700;font-size:0.85rem;letter-spacing:0.06em;text-transform:uppercase;
+  text-decoration:none;transition:transform 0.2s,box-shadow 0.2s;cursor:none;
+}
+.ob-zomato:hover{transform:scale(1.04);box-shadow:0 8px 25px rgba(0,0,0,0.3);}
+.ob-call{
+  background:rgba(8,15,9,0.15);color:var(--dark);
+  border:2px solid rgba(8,15,9,0.3);
+  padding:0.9rem 2rem;border-radius:50px;
+  font-weight:700;font-size:0.85rem;letter-spacing:0.06em;text-transform:uppercase;
+  text-decoration:none;transition:background 0.2s;cursor:none;
+}
+.ob-call:hover{background:rgba(8,15,9,0.25);}
+
+/* FOOTER */
+footer{
+  background:var(--dark);
+  border-top:1px solid rgba(255,255,255,0.05);
+  padding:4rem 5% 2rem;
+}
+.footer-grid{
+  display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:3rem;
+  margin-bottom:3rem;padding-bottom:3rem;
+  border-bottom:1px solid rgba(255,255,255,0.05);
+}
+.footer-logo{
+  font-family:'Righteous',cursive;font-size:2rem;
+  background:linear-gradient(135deg,var(--yellow),var(--lime));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  display:block;margin-bottom:1rem;
+}
+.footer-desc{font-size:0.85rem;color:rgba(255,255,255,0.35);line-height:1.7;font-weight:300;max-width:240px;}
+.footer-col-title{
+  font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--lime);font-weight:700;margin-bottom:1.2rem;
+}
+.footer-links{list-style:none;display:flex;flex-direction:column;gap:0.65rem;}
+.footer-links a{
+  text-decoration:none;color:rgba(255,255,255,0.35);
+  font-size:0.85rem;font-weight:300;transition:color 0.2s;cursor:none;
+}
+.footer-links a:hover{color:var(--white);}
+.footer-bottom{
+  display:flex;justify-content:space-between;align-items:center;
+  font-size:0.75rem;color:rgba(255,255,255,0.2);flex-wrap:wrap;gap:0.5rem;
+}
+.rating-chip{
+  background:rgba(94,203,107,0.1);border:1px solid rgba(94,203,107,0.2);
+  color:var(--lime);padding:0.3rem 0.9rem;border-radius:50px;
+  font-size:0.72rem;font-weight:600;letter-spacing:0.08em;
+}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.reveal{opacity:0;transform:translateY(20px);transition:opacity 0.6s ease,transform 0.6s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+
+/* MOBILE */
+@media(max-width:1000px){
+  .hero{grid-template-columns:1fr;min-height:auto;padding-bottom:4rem;}
+  .hero-right{display:none;}
+  .specials-grid{grid-template-columns:1fr 1fr;}
+  .about-inner,.visit-grid{grid-template-columns:1fr;}
+  .footer-grid{grid-template-columns:1fr 1fr;}
+  nav .nav-links{display:none;}
+  .hero-stats{gap:1.5rem;}
+  .info-strip{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:600px){
+  .specials-grid,.menu-grid{grid-template-columns:1fr;}
+  .info-strip,.footer-grid{grid-template-columns:1fr;}
+  .order-strip{flex-direction:column;}
+  .features-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav id="navbar">
+  <div class="nav-logo">Tropico</div>
+  <ul class="nav-links">
+    <li><a href="#menu">Menu</a></li>
+    <li><a href="#specials">Specials</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#visit">Visit</a></li>
+  </ul>
+  <a href="tel:+917400878151" class="nav-cta">📞 Call Now</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-noise"></div>
+  <div class="float-el"></div>
+  <div class="float-el"></div>
+  <div class="float-el"></div>
+
+  <div class="hero-left">
+    <div class="hero-pill"><span class="pill-dot"></span>Open Today · Mon–Tue &amp; Thu–Sun: till 11 PM · Wed: till Midnight</div>
+    <h1 class="hero-title">
+      <span class="line1">FRESH &</span>
+      <span class="line2">Tropical</span>
+    </h1>
+    <p class="hero-sub">Mowa's favourite spot for <em>fresh juices</em>, cold coffees, loaded pizzas and so much more. 100% vegetarian. Always delicious.</p>
+    <div class="hero-actions">
+      <a href="#menu" class="btn-primary">Explore Menu</a>
+      <a href="#visit" class="btn-ghost-hero"><span class="arrow-circle">→</span>Find Us</a>
+    </div>
+    <div class="hero-stats">
+      <div><div class="stat-num">4.2★</div><div class="stat-lbl">Zomato</div></div>
+      <div><div class="stat-num">₹300</div><div class="stat-lbl">For Two</div></div>
+      <div><div class="stat-num">48</div><div class="stat-lbl">Ratings</div></div>
+      <div><div class="stat-num">100%</div><div class="stat-lbl">Veg</div></div>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="hero-visual">
+      <div class="hero-circle-outer">
+        <div class="orbit-dot"></div>
+        <div class="orbit-dot"></div>
+        <div class="orbit-dot"></div>
+        <div class="orbit-dot"></div>
+        <div class="hero-circle-inner">
+          <div class="hero-center">
+            <div class="hero-center-text">
+              <div class="hct-main">TROPICO</div>
+              <div class="hct-sub">Mowa · Raipur</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="food-tag ft1"><span class="tag-emoji">🥤</span><div><div class="tag-text">Thick Cold Coffee</div><div class="tag-price">₹140</div></div></div>
+      <div class="food-tag ft2"><span class="tag-emoji">🍕</span><div><div class="tag-text">Paneer Masala Pizza</div><div class="tag-price">₹200</div></div></div>
+      <div class="food-tag ft3"><span class="tag-emoji">🍜</span><div><div class="tag-text">Veg Paneer Maggie</div><div class="tag-price">₹120</div></div></div>
+      <div class="food-tag ft4"><span class="tag-emoji">🍹</span><div><div class="tag-text">Dark Mojito</div><div class="tag-price">₹100</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <span class="m-item">Fresh Juices</span><span class="m-dot">✦</span>
+    <span class="m-item">Smoothies</span><span class="m-dot">✦</span>
+    <span class="m-item">Shakes</span><span class="m-dot">✦</span>
+    <span class="m-item">Cold Coffee</span><span class="m-dot">✦</span>
+    <span class="m-item">Mojito</span><span class="m-dot">✦</span>
+    <span class="m-item">Salad Bowls</span><span class="m-dot">✦</span>
+    <span class="m-item">Fries</span><span class="m-dot">✦</span>
+    <span class="m-item">Maggie</span><span class="m-dot">✦</span>
+    <span class="m-item">Sandwiches</span><span class="m-dot">✦</span>
+    <span class="m-item">Pizza</span><span class="m-dot">✦</span>
+    <span class="m-item">Wraps</span><span class="m-dot">✦</span>
+    <span class="m-item">Fresh Juices</span><span class="m-dot">✦</span>
+    <span class="m-item">Smoothies</span><span class="m-dot">✦</span>
+    <span class="m-item">Shakes</span><span class="m-dot">✦</span>
+    <span class="m-item">Cold Coffee</span><span class="m-dot">✦</span>
+    <span class="m-item">Mojito</span><span class="m-dot">✦</span>
+    <span class="m-item">Salad Bowls</span><span class="m-dot">✦</span>
+    <span class="m-item">Fries</span><span class="m-dot">✦</span>
+    <span class="m-item">Maggie</span><span class="m-dot">✦</span>
+    <span class="m-item">Sandwiches</span><span class="m-dot">✦</span>
+    <span class="m-item">Pizza</span><span class="m-dot">✦</span>
+    <span class="m-item">Wraps</span><span class="m-dot">✦</span>
+  </div>
+</div>
+
+<!-- INFO STRIP -->
+<div class="info-strip">
+  <div class="info-card reveal">
+    <span class="info-icon">🕐</span>
+    <div class="info-label">Hours</div>
+    <div class="info-val">Mon–Tue, Thu–Sun: 12 Noon – 11 PM<br>Wed: 12 Noon – 12 Midnight</div>
+  </div>
+  <div class="info-card reveal">
+    <span class="info-icon">📍</span>
+    <div class="info-label">Location</div>
+    <div class="info-val">Shop 3, Horizon Tower<br>Dubey Colony, Mowa, Raipur</div>
+  </div>
+  <div class="info-card reveal">
+    <span class="info-icon">🛵</span>
+    <div class="info-label">Services</div>
+    <div class="info-val">Dine-in · Takeaway<br>Home Delivery</div>
+  </div>
+  <div class="info-card reveal">
+    <span class="info-icon">💳</span>
+    <div class="info-label">Payment</div>
+    <div class="info-val">Digital Payments<br>Accepted</div>
+  </div>
+</div>
+
+<!-- MENU -->
+<section class="menu-section" id="menu">
+  <div class="section-header reveal">
+    <div class="s-eyebrow">What We Serve</div>
+    <h2 class="s-title">Our <span class="accent">Menu</span></h2>
+  </div>
+
+  <div class="cat-tabs">
+    <button class="cat-tab active" onclick="filterCat('all',this)">All</button>
+    <button class="cat-tab" onclick="filterCat('juice',this)">🥤 Juices</button>
+    <button class="cat-tab" onclick="filterCat('smoothie',this)">🧃 Smoothies</button>
+    <button class="cat-tab" onclick="filterCat('shake',this)">🥛 Shakes</button>
+    <button class="cat-tab" onclick="filterCat('coffee',this)">☕ Cold Coffee</button>
+    <button class="cat-tab" onclick="filterCat('mojito',this)">🍹 Mojito</button>
+    <button class="cat-tab" onclick="filterCat('salad',this)">🥗 Salad Bowls</button>
+    <button class="cat-tab" onclick="filterCat('fries',this)">🍟 Fries</button>
+    <button class="cat-tab" onclick="filterCat('maggie',this)">🍜 Maggie</button>
+    <button class="cat-tab" onclick="filterCat('sandwich',this)">🥪 Sandwiches</button>
+    <button class="cat-tab" onclick="filterCat('pizza',this)">🍕 Pizza</button>
+    <button class="cat-tab" onclick="filterCat('wrap',this)">🌯 Wraps</button>
+  </div>
+
+  <div class="menu-grid" id="menuGrid">
+
+    <div class="cat-label" data-cat="juice" id="lbl-juice"><span class="cat-label-text">🥤 Fresh Juices</span><span class="cat-label-line"></span></div>
+    <div class="menu-item" data-cat="juice"><div class="item-left"><div class="item-name">Watermelon Juice</div><div class="item-desc">Fresh seasonal watermelon</div></div><div class="item-right"><div class="item-price">₹70</div><button class="add-btn">+ ADD</button></div></div>
+    <div class="menu-item" data-cat="juice"><div class="item-left"><div class="item-name">Mausambi Juice</div><div class="item-desc">Fresh sweet lime</div></div><div class="item-right"><div class="item-price">₹80</div><button class="add-btn">+ ADD</button></div></div>
+    <div class="menu-item" data-cat="juice"><div class="item-left"><div class="item-name">Orange Juice</div><div class="item-desc">Fresh squeezed orange</div></div><div class="item-right"><div class="item-price">₹90</div><button class="add-btn">+ ADD</button></div></div>
+    <div class="menu-item" data-cat="juice"><div class="item-left"><div class="item-name">Twin Town</div><div class="item-desc">Pineapple + Mausambi</div></div><div class="item-right"><div class="item-price">₹100</div><button class="add-btn">+ ADD</button></div></div>
+    <div class="menu-item" data-cat="juice"><div class="item-left"><div class="item-name">Sunrise</div><div class="item-desc">Orange + Mausambi</div></div><div class="item-right"><div class="item-price">₹100</div><button class="add-btn">+ ADD</button></div></div>
+    <div class="menu-item special" data-cat="juice"><div class="item-left"><div class="item-name">Mix Fruit</div><div class="item-desc">Orange + Mausambi + Pineapple + Pomegranate</div><div class="item-badges"><span class="badge badge-hit">⭐ Popular</span></div></div><div class="item-right"><div class="item-price">₹110</div><button class="add-btn">+ ADD</button></div></div>
+    <div class="menu-item" data-cat="juice"><div class="item-left"><div class="item-name">Pineapple Juice</div><div class="item-desc">Fresh pineapple crush</div></div><div class="item-right"><div class="item-price">₹120</div><button class="add-btn">+ ADD</button></div></div>
+
+    <div class="cat-label" data-cat="smoothie" id="lbl-smoothie"><span class="cat-label-text">🧃 Smoothies</span><span class="cat-label-line"></span></div>
+    <div class="menu-item" data-cat="smoothie"><div class="item-left"><div class="item-name">Chikoo Smoothie</div><div class="item-desc">Creamy sapota smoothie</div></div><div class="item-right"><div class="item-price">₹100</div><button class="add-btn">+ ADD</button></div></div>
+    <div class="menu-item" data-cat="smoothie"><div class="item-left"><div class="item-name">Mango Smoothie</div><div class="item-desc">Thick fresh mango blend</div></div><div class="item-right"><div class="item-price">₹110</div><button class="add-btn">+ ADD</button></div></div>
+    <div class="menu-item" data-cat="smoothie"><div class="item-left"><div class="item-name">Guava Smoothie</div><div class="item-desc">Fresh guava with a twist</div></div><div class="item-right"><div class="item-price">₹120</div><button class="add-btn">+ ADD</button></div></div>
+    <div class="menu-item" data-cat="smoothie"><div class="item-left"><div class="item-name">Sitafal Smoothie</div><div class="item-desc">Custard apple smoothie</div></div><div class="item-right"><div class="item-price">₹120</div><button class="add-btn">+ ADD</button></div></div>
+
+    <div class="cat-label" data-cat="shake" id="lbl-shake"><span class="cat-label-text">🥛 Shakes</span><span class="cat-label-line"></span></div>
+    <div class="menu-item" data-cat="shake"><div class="item-left"><div class="item-name">Oreo Shake</div><div class="item-desc">Thick Oreo cookie milkshake</div></div><div class="item-right"><div class="item-price">₹130</div><button class="add-btn">+ ADD</button></div></div>
+    <div class="menu-item" data-cat="shake"><div class="item-left"><div class="item-name">Chocolate Shake</div><div class="item-desc">Rich dark chocolate shake</div></div><div class="item-right"><div class="item-price">₹130</div><button class="add-btn">+ ADD</button></div></div>
+    <div class="menu-item special" data-cat="shake"><div class="item-left"><div class="item-name">Kit-Kat Shake</div><div class="item-desc">Kit-Kat blended milkshake</div><div class="item-badges"><span class="badge badge-hit">⭐ Hit</span></div></div><div class="item-right"><div class="item-price">₹140</div><button class="add-btn">+ ADD</button></div></div>
+
+    <div class="cat-label" data-cat="coffee" id="lbl-coffee"><span class="cat-label-text">☕ Cold Coffee</span><span class="cat-label-line"></span></div>
+    <div class="menu-item" data-cat="coffee"><div class="item-left"><div class="item-name">Classic Cold Coffee</div><div class="item-desc">Chilled blended coffee</div></div><div class="item-right"><div class="item-price">₹110</div><button class="add-btn">+ ADD</button></div></div>
+    <div class="menu-item special" data-cat="coffee"><div class="item-left"><div class="item-name">Thick Cold Coffee</div><div class="item-desc">Extra thick blended cold coffee</div><div class="item-badges"><span class="badge badge-hit">⭐ Popular</span></div></div><div class="item-right"><div class="item-price">₹120</div><button class="add-btn">+ ADD</button></div></div>
+    <div class="menu-item special" data-cat="coffee"><div class="item-left"><div class="item-name">Cold Coffee + Ice Cream</div><div class="item-desc">Cold coffee topped with ice cream</div><div class="item-badges"><span class="badge badge-new">✦ Must Try</span></div></div><div class="item-right"><div class="item-price">₹140</div><button class="add-btn">+ ADD</button></div></div>
+
+    <div class="cat-label" data-cat="mojito" id="lbl-mojito"><span class="cat-label-text">🍹 Mojito</span><span class="cat-label-line"></span></div>
+    <div class="menu-item" data-cat="mojito"><div class="item-left"><div class="item-name">Virgin Vanilla</div><div class="item-desc">Vanilla mint refresher</div></div><div class="item-right"><div class="item-price">₹100</div><button class="add-btn">+ ADD</button></div></div>
+    <div class="menu-item" data-cat="mojito"><div class="item-left"><div class="item-name">Blue Lagoon</div><div class="item-desc">Blue refreshing mojito</div></div><div class="item-right"><div class="item-price">₹100</div><button class="add-btn">+ ADD</button></div></div>
+    <div class="menu-item" data-cat="mojito"><div class="item-left"><div class="item-name">Green Mint</div><div class="item-desc">Classic mint lime mojito</div></div><div class="item-right"><div class="item-price">₹100</div><button class="add-btn">+ ADD</button></div></div>
+    <div class="menu-item" data-cat="mojito"><div class="item-left"><div class="item-name">Kesar Mojito</div><div class="item-desc">Saffron-infused mojito</div></div><div class="item-right"><div class="item-price">₹100</div><button class="add-btn">+ ADD</button></div></div>
+    <div class="menu-item" data-cat="mojito"><div class="item-left"><div class="item-name">Strawberry Mojito</div><div class="item-desc">Fresh strawberry mojito</div></div><div class="item-right"><div class="item-price">₹100</div><button class="add-btn">+ ADD</button></div></div>
+    <div class="menu-item special" data-cat="mojito"><div class="item-left"><div class="item-name">Dark Mojito</div><div class="item-desc">Bold dark mojito</div><div class="item-badges"><span class="badge badge-hit">⭐ Favourite</span></div></div><div class="item-right"><div class="item-price">₹100</div><button class="add-btn">+ ADD</button></div></div>
+    <div class="menu-item" data-cat="mojito"><div class="item-left"><div class="item-name">Masala Coke</div><div class="item-desc">Spiced cola with masala</div></div><div class="item-right"><div class="item-price">₹100</div><button class="add-btn">+ ADD</button></div></div>
+    <div class="menu-item" data-cat="mojito"><div class="item-left"><div class="item-name">Black Currant</div><div class="item-desc">Black currant refresher</div></div><div class="item-right"><div class="item-price">₹110</div><button class="add-btn">+ ADD</button></div></div>
+    <div class="menu-item" data-cat="mojito"><div class="item-left"><div class="item-name">Blueberry Mojito</div><div class="item-desc">Blueberry mint fizz</div></div><div class="item-right"><div class="item-price">₹110</div><button class="add-btn">+ ADD</button></div></div>
+
+    <div class="cat-label" data-cat="salad" id="lbl-salad"><span class="cat-label-text">🥗 Salad Bowls</span><span class="cat-label-line"></span></div>
+    <div class="menu-item" data-cat="salad"><div class="item-left"><div class="item-name">Fruit Salad</div><div class="item-desc">Fresh seasonal fruit bowl</div></div><div class="item-right"><div class="item-price">₹100</div><button class="add-btn">+ ADD</button></div></div>
+    <div class="menu-item special" data-cat="salad"><div class="item-left"><div class="item-name">Zatzhiki Salad</div><div class="item-desc">Greek-style yogurt salad</div><div class="item-badges"><span class="badge badge-hit">⭐ Special</span></div></div><div class="item-right"><div class="item-price">₹110</div><button class="add-btn">+ ADD</button></div></div>
+    <div class="menu-item special" data-cat="salad"><div class="item-left"><div class="item-name">Som-Tam Salad</div><div class="item-desc">Thai-style raw papaya salad</div><div class="item-badges"><span class="badge badge-new">✦ Chef's Pick</span></div></div><div class="item-right"><div class="item-price">₹130</div><button class="add-btn">+ ADD</button></div></div>
+    <div class="menu-item" data-cat="salad"><div class="item-left"><div class="item-name">Veg Sautee Salad</div><div class="item-desc">Lightly sauteed vegetables</div></div><div class="item-right"><div class="item-price">₹130</div><button class="add-btn">+ ADD</button></div></div>
+    <div class="menu-item" data-cat="salad"><div class="item-left"><div class="item-name">Exotic Veg Sautee</div><div class="item-desc">Exotic vegetables sauteed fresh</div></div><div class="item-right"><div class="item-price">₹170</div><button class="add-btn">+ ADD</button></div></div>
+
+    <div class="cat-label" data-cat="fries" id="lbl-fries"><span class="cat-label-text">🍟 Fries</span><span class="cat-label-line"></span></div>
+    <div class="menu-item" data-cat="fries"><div class="item-left"><div class="item-name">Salted Fries</div><div class="item-desc">Classic crispy salted fries</div></div><div class="item-right"><div class="item-price">₹80</div><button class="add-btn">+ ADD</button></div></div>
+    <div class="menu-item" data-cat="fries"><div class="item-left"><div class="item-name">Peri-Peri Fries</div><div class="item-desc">Spicy peri-peri seasoned fries</div></div><div class="item-right"><div class="item-price">₹90</div><button class="add-btn">+ ADD</button></div></div>
+    <div class="menu-item" data-cat="fries"><div class="item-left"><div class="item-name">Cheesy Fries</div><div class="item-desc">Fries loaded with cheese</div></div><div class="item-right"><div class="item-price">₹110</div><button class="add-btn">+ ADD</button></div></div>
+    <div class="menu-item special" data-cat="fries"><div class="item-left"><div class="item-name">Cheesy Peri-Peri Fries</div><div class="item-desc">Peri-peri fries with melted cheese</div><div class="item-badges"><span class="badge badge-hit">⭐ Best Seller</span></div></div><div class="item-right"><div class="item-price">₹120</div><button class="add-btn">+ ADD</button></div></div>
+
+    <div class="cat-label" data-cat="maggie" id="lbl-maggie"><span class="cat-label-text">🍜 Maggie</span><span class="cat-label-line"></span></div>
+    <div class="menu-item" data-cat="maggie"><div class="item-left"><div class="item-name">Regular Maggie</div><div class="item-desc">Classic Maggie noodles</div></div><div class="item-right"><div class="item-price">₹70</div><button class="add-btn">+ ADD</button></div></div>
+    <div class="menu-item" data-cat="maggie"><div class="item-left"><div class="item-name">Peri-Peri Maggie</div><div class="item-desc">Maggie with peri-peri spice</div></div><div class="item-right"><div class="item-price">₹80</div><button class="add-btn">+ ADD</button></div></div>
+    <div class="menu-item" data-cat="maggie"><div class="item-left"><div class="item-name">Schezwan Maggie</div><div class="item-desc">Maggie in schezwan sauce</div></div><div class="item-right"><div class="item-price">₹90</div><button class="add-btn">+ ADD</button></div></div>
+    <div class="menu-item" data-cat="maggie"><div class="item-left"><div class="item-name">Veggie Maggie + Cheese</div><div class="item-desc">Veg Maggie with cheese topping</div></div><div class="item-right"><div class="item-price">₹90/₹110</div><button class="add-btn">+ ADD</button></div></div>
+    <div class="menu-item" data-cat="maggie"><div class="item-left"><div class="item-name">Chilli-Lemon Maggie</div><div class="item-desc">Tangy chilli lemon flavour</div></div><div class="item-right"><div class="item-price">₹90</div><button class="add-btn">+ ADD</button></div></div>
+    <div class="menu-item" data-cat="maggie"><div class="item-left"><div class="item-name">Cheese-Corn Maggie</div><div class="item-desc">Maggie with cheese and corn</div></div><div class="item-right"><div class="item-price">₹100</div><button class="add-btn">+ ADD</button></div></div>
+    <div class="menu-item" data-cat="maggie"><div class="item-left"><div class="item-name">Tandoori Maggie</div><div class="item-desc">Maggie with tandoori masala</div></div><div class="item-right"><div class="item-price">₹100</div><button class="add-btn">+ ADD</button></div></div>
+    <div class="menu-item special" data-cat="maggie"><div class="item-left"><div class="item-name">Veg Paneer Maggie</div><div class="item-desc">Maggie with paneer chunks</div><div class="item-badges"><span class="badge badge-hit">⭐ Special</span></div></div><div class="item-right"><div class="item-price">₹120</div><button class="add-btn">+ ADD</button></div></div>
+
+    <div class="cat-label" data-cat="sandwich" id="lbl-sandwich"><span class="cat-label-text">🥪 Sandwiches</span><span class="cat-label-line"></span></div>
+    <div class="menu-item" data-cat="sandwich"><div class="item-left"><div class="item-name">Veg Grilled Sandwich</div><div class="item-desc">Classic grilled veg · with cheese option</div></div><div class="item-right"><div class="item-price">₹120/₹140</div><button class="add-btn">+ ADD</button></div></div>
+    <div class="menu-item" data-cat="sandwich"><div class="item-left"><div class="item-name">Cheese-Corn Sandwich</div><div class="item-desc">Grilled cheese and sweet corn</div></div><div class="item-right"><div class="item-price">₹130</div><button class="add-btn">+ ADD</button></div></div>
+    <div class="menu-item special" data-cat="sandwich"><div class="item-left"><div class="item-name">Chillipeno Sandwich</div><div class="item-desc">Spicy jalapeno grilled sandwich</div><div class="item-badges"><span class="badge badge-hot">🔥 Spicy</span></div></div><div class="item-right"><div class="item-price">₹140</div><button class="add-btn">+ ADD</button></div></div>
+    <div class="menu-item" data-cat="sandwich"><div class="item-left"><div class="item-name">Tandoori Paneer Sandwich</div><div class="item-desc">Paneer with tandoori spices</div></div><div class="item-right"><div class="item-price">₹140</div><button class="add-btn">+ ADD</button></div></div>
+    <div class="menu-item special" data-cat="sandwich"><div class="item-left"><div class="item-name">Cheesy Peasy Sandwich</div><div class="item-desc">Extra cheesy loaded sandwich</div><div class="item-badges"><span class="badge badge-hit">⭐ Favourite</span></div></div><div class="item-right"><div class="item-price">₹140</div><button class="add-btn">+ ADD</button></div></div>
+    <div class="menu-item" data-cat="sandwich"><div class="item-left"><div class="item-name">Mexican Sandwich</div><div class="item-desc">Mexican-spiced veggie sandwich</div></div><div class="item-right"><div class="item-price">₹150</div><button class="add-btn">+ ADD</button></div></div>
+
+    <div class="cat-label" data-cat="pizza" id="lbl-pizza"><span class="cat-label-text">🍕 Pizza</span><span class="cat-label-line"></span></div>
+    <div class="menu-item" data-cat="pizza"><div class="item-left"><div class="item-name">Margherita Pizza</div><div class="item-desc">Classic tomato + mozzarella</div></div><div class="item-right"><div class="item-price">₹160</div><button class="add-btn">+ ADD</button></div></div>
+    <div class="menu-item" data-cat="pizza"><div class="item-left"><div class="item-name">Golden Corn Pizza</div><div class="item-desc">Sweet corn with cheese</div></div><div class="item-right"><div class="item-price">₹180</div><button class="add-btn">+ ADD</button></div></div>
+    <div class="menu-item" data-cat="pizza"><div class="item-left"><div class="item-name">BBQ Paneer Pizza</div><div class="item-desc">Paneer in smoky BBQ sauce</div></div><div class="item-right"><div class="item-price">₹180</div><button class="add-btn">+ ADD</button></div></div>
+    <div class="menu-item special" data-cat="pizza"><div class="item-left"><div class="item-name">Paneer Masala Pizza</div><div class="item-desc">Spicy desi paneer pizza</div><div class="item-badges"><span class="badge badge-hit">⭐ Most Ordered</span></div></div><div class="item-right"><div class="item-price">₹200</div><button class="add-btn">+ ADD</button></div></div>
+    <div class="menu-item special" data-cat="pizza"><div class="item-left"><div class="item-name">Exotic Veg Pizza</div><div class="item-desc">Loaded with exotic vegetables</div><div class="item-badges"><span class="badge badge-new">✦ Chef's Pick</span></div></div><div class="item-right"><div class="item-price">₹210</div><button class="add-btn">+ ADD</button></div></div>
+
+    <div class="cat-label" data-cat="wrap" id="lbl-wrap"><span class="cat-label-text">🌯 Wraps</span><span class="cat-label-line"></span></div>
+    <div class="menu-item special" data-cat="wrap"><div class="item-left"><div class="item-name">Veg Patty Wrap</div><div class="item-desc">Crispy veg patty in tortilla</div><div class="item-badges"><span class="badge badge-hit">⭐ Popular</span></div></div><div class="item-right"><div class="item-price">₹170</div><button class="add-btn">+ ADD</button></div></div>
+    <div class="menu-item special" data-cat="wrap"><div class="item-left"><div class="item-name">Hara-Bhara Wrap</div><div class="item-desc">Green hara-bhara kebab wrap</div><div class="item-badges"><span class="badge badge-hit">⭐ Special</span></div></div><div class="item-right"><div class="item-price">₹170</div><button class="add-btn">+ ADD</button></div></div>
+    <div class="menu-item special" data-cat="wrap"><div class="item-left"><div class="item-name">Veg Finger Wrap</div><div class="item-desc">Crispy veg fingers in wrap</div><div class="item-badges"><span class="badge badge-new">✦ Trending</span></div></div><div class="item-right"><div class="item-price">₹180</div><button class="add-btn">+ ADD</button></div></div>
+
+  </div>
+</section>
+
+<!-- SPECIALS -->
+<section class="specials" id="specials">
+  <div class="specials-bg-text">TROPICO</div>
+  <div class="section-header reveal">
+    <div class="s-eyebrow">Must Try</div>
+    <h2 class="s-title">Star <span class="accent">Picks</span></h2>
+  </div>
+  <div class="specials-grid">
+    <div class="special-card reveal"><span class="sc-emoji">🥤</span><div class="sc-name">Cold Coffee + Ice Cream</div><div class="sc-desc">Extra thick cold coffee with a scoop of ice cream. The ultimate cold treat at Tropico.</div><div class="sc-footer"><span class="sc-price">₹140</span><span class="sc-tag">⭐ Must Try</span></div></div>
+    <div class="special-card reveal"><span class="sc-emoji">🍟</span><div class="sc-name">Cheesy Peri-Peri Fries</div><div class="sc-desc">Crispy fries tossed in peri-peri spice and loaded with melted cheese. Addictive.</div><div class="sc-footer"><span class="sc-price">₹120</span><span class="sc-tag">⭐ Best Seller</span></div></div>
+    <div class="special-card reveal"><span class="sc-emoji">🍹</span><div class="sc-name">Dark Mojito</div><div class="sc-desc">Tropico's bold signature mojito. Dark, refreshing and absolutely irresistible.</div><div class="sc-footer"><span class="sc-price">₹100</span><span class="sc-tag">⭐ Favourite</span></div></div>
+    <div class="special-card reveal"><span class="sc-emoji">🍕</span><div class="sc-name">Paneer Masala Pizza</div><div class="sc-desc">Desi meets Italian — a spicy paneer masala pizza that's Tropico's most ordered item.</div><div class="sc-footer"><span class="sc-price">₹200</span><span class="sc-tag">⭐ Most Ordered</span></div></div>
+    <div class="special-card reveal"><span class="sc-emoji">🌯</span><div class="sc-name">Hara-Bhara Wrap</div><div class="sc-desc">Green hara-bhara kebab wrapped in soft tortilla with fresh veggies and sauces.</div><div class="sc-footer"><span class="sc-price">₹170</span><span class="sc-tag">⭐ Special</span></div></div>
+    <div class="special-card reveal"><span class="sc-emoji">🍜</span><div class="sc-name">Veg Paneer Maggie</div><div class="sc-desc">Maggie elevated with succulent paneer chunks and a rich masala base.</div><div class="sc-footer"><span class="sc-price">₹120</span><span class="sc-tag">⭐ Chef's Pick</span></div></div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about" id="about">
+  <div class="about-inner">
+    <div class="about-visual reveal">
+      <div class="about-img-wrap">
+        <img src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800&q=80" alt="Tropico Cafe interior" />
+        <div class="about-overlay-text">
+          <div class="aot-rating">⭐ 4.2 on Zomato · 48 Ratings</div>
+          <div class="aot-name">Tropico, Mowa</div>
+        </div>
+      </div>
+      <div class="about-deco">🌿</div>
+    </div>
+    <div class="about-content">
+      <div class="s-eyebrow">About Us</div>
+      <h2 class="s-title reveal">Fresh & <span class="accent">Vibrant</span></h2>
+      <p class="about-body reveal">Tropico is Mowa's go-to spot for fresh tropical drinks, loaded bites, and good vibes. Tucked inside Horizon Tower at Dubey Colony, we're your neighbourhood escape for something delicious.</p>
+      <p class="about-body reveal">Everything on our menu is 100% vegetarian — from thick cold coffees and tropical juices to cheesy pizzas and crunchy wraps. Made fresh, served fast, always satisfying.</p>
+      <div class="features-grid reveal">
+        <div class="feat-item"><span class="feat-icon">🥦</span>100% Vegetarian</div>
+        <div class="feat-item"><span class="feat-icon">🛵</span>Home Delivery</div>
+        <div class="feat-item"><span class="feat-icon">🪑</span>Indoor Seating</div>
+        <div class="feat-item"><span class="feat-icon">🛍</span>Takeaway</div>
+        <div class="feat-item"><span class="feat-icon">💳</span>Digital Payments</div>
+        <div class="feat-item"><span class="feat-icon">⭐</span>4.2★ Rated</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VISIT -->
+<section class="visit" id="visit">
+  <div class="section-header reveal">
+    <div class="s-eyebrow">Come See Us</div>
+    <h2 class="s-title">Find <span class="accent">Tropico</span></h2>
+  </div>
+  <div class="visit-grid">
+    <div class="v-cards">
+      <div class="v-card reveal"><div class="v-icon">📍</div><div><p class="v-label">Address</p><p class="v-val">Shop 3, Ground Floor, Horizon Tower<br>Dubey Colony, Ward 9, Near Mamta Hospital<br>Mowa, Raipur</p></div></div>
+      <div class="v-card reveal"><div class="v-icon">🕐</div><div><p class="v-label">Opening Hours</p><p class="v-val">Mon–Tue, Thu–Sun: 12 Noon – 11 PM<br>Wed: 12 Noon – 12 Midnight</p></div></div>
+      <div class="v-card reveal"><div class="v-icon">📞</div><div><p class="v-label">Phone</p><p class="v-val"><a href="tel:+917400878151">+91 74008 78151</a></p></div></div>
+      <div class="v-card reveal"><div class="v-icon">💰</div><div><p class="v-label">Average Cost</p><p class="v-val">₹300 for two people (approx.)</p></div></div>
+    </div>
+    <div class="map-card reveal">
+      <div class="map-top">
+        <div class="map-rings"></div>
+        <div class="map-pin">📍</div>
+        <div class="map-title">Tropico, Mowa</div>
+        <div class="map-addr">Shop 3, Horizon Tower, Dubey Colony<br>Near Mamta Hospital, Mowa<br>Raipur, Chhattisgarh</div>
+      </div>
+      <div class="map-bottom">
+        <a href="https://www.zomato.com/raipur/tropico-1-mowa" target="_blank" class="btn-zomato">🍽 Order on Zomato</a>
+        <a href="tel:+917400878151" class="btn-call">📞 Call Us</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ORDER STRIP -->
+<section class="order-strip" id="order">
+  <div class="os-left">
+    <div class="os-title">Order Online Now 🛵</div>
+    <div class="os-sub">Get your favourite Tropico food delivered to your door</div>
+  </div>
+  <div class="os-btns">
+    <a href="https://www.zomato.com/raipur/tropico-1-mowa" target="_blank" class="ob-zomato">🍽 Order on Zomato</a>
+    <a href="tel:+917400878151" class="ob-call">📞 +91 74008 78151</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <span class="footer-logo">Tropico</span>
+      <p class="footer-desc">Fresh juices, tropical vibes, and delicious bites — all in the heart of Mowa, Raipur.</p>
+    </div>
+    <div>
+      <p class="footer-col-title">Menu</p>
+      <ul class="footer-links">
+        <li><a href="#menu">Fresh Juices</a></li>
+        <li><a href="#menu">Smoothies & Shakes</a></li>
+        <li><a href="#menu">Cold Coffee & Mojito</a></li>
+        <li><a href="#menu">Pizza & Wraps</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="footer-col-title">Visit</p>
+      <ul class="footer-links">
+        <li><a href="#visit">Location</a></li>
+        <li><a href="#visit">Hours</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#specials">Star Picks</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="footer-col-title">Contact</p>
+      <ul class="footer-links">
+        <li><a href="tel:+917400878151">+91 74008 78151</a></li>
+        <li><a href="https://www.zomato.com/raipur/tropico-1-mowa" target="_blank">Zomato Page</a></li>
+        <li><a href="#visit">Near Mamta Hospital</a></li>
+        <li><a href="#visit">Mowa, Raipur</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2024 Tropico, Mowa · All rights reserved.</span>
+    <span class="rating-chip">⭐ 4.2 on Zomato</span>
+    <span>Made with 🌿 in Raipur</span>
+  </div>
+</footer>
+
+<script>
+// Custom cursor
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursorRing');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cursor.style.left=mx+'px';cursor.style.top=my+'px';});
+function animRing(){rx+=(mx-rx)*0.12;ry+=(my-ry)*0.12;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(animRing);}
+animRing();
+document.querySelectorAll('a,button,.menu-item,.special-card,.cat-tab').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{cursor.style.width='20px';cursor.style.height='20px';ring.style.width='52px';ring.style.height='52px';});
+  el.addEventListener('mouseleave',()=>{cursor.style.width='12px';cursor.style.height='12px';ring.style.width='36px';ring.style.height='36px';});
+});
+
+// Navbar scroll
+window.addEventListener('scroll',()=>{
+  document.getElementById('navbar').classList.toggle('scrolled',scrollY>60);
+});
+
+// Menu filter
+function filterCat(cat,btn){
+  document.querySelectorAll('.cat-tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  const items=document.querySelectorAll('.menu-item');
+  const labels=document.querySelectorAll('.cat-label');
+  items.forEach(item=>{
+    const show=cat==='all'||item.dataset.cat===cat;
+    item.style.display=show?'':'none';
+  });
+  labels.forEach(lbl=>{
+    const show=cat==='all'||lbl.dataset.cat===cat;
+    lbl.style.display=show?'':'none';
+  });
+}
+
+// Scroll reveal
+const revealObs=new IntersectionObserver((entries)=>{
+  entries.forEach((e,i)=>{
+    if(e.isIntersecting){
+      setTimeout(()=>{e.target.classList.add('visible');},i*60);
+    }
+  });
+},{threshold:0.08});
+document.querySelectorAll('.reveal').forEach(el=>revealObs.observe(el));
+
+// Menu item click feedback
+document.querySelectorAll('.add-btn').forEach(btn=>{
+  btn.addEventListener('click',function(){
+    const prev=this.textContent;
+    this.textContent='✓ Added!';
+    this.style.color='var(--lime)';
+    setTimeout(()=>{this.textContent=prev;this.style.color='';},1800);
+  });
+});
+</script>
+</body>
+</html>
